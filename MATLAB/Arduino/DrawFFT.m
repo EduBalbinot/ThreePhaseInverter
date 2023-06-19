@@ -9,7 +9,7 @@ function [Xta, Xtb, Xtc] = DrawFFT(Ma, Mb, Mc, F, triang, Mf, f, t, xai, xbi, xc
                if M{m}(i) > triang(i)
                    Xt{m}(i) = 1;
                else
-                   Xt{m}(i) = -1;
+                   Xt{m}(i) = 0;
                end
             end
         end
@@ -25,7 +25,9 @@ function [Xta, Xtb, Xtc] = DrawFFT(Ma, Mb, Mc, F, triang, Mf, f, t, xai, xbi, xc
                 else
                     o = Ao{m};
                 end
-                Xt{m}(i)=o;
+                if o==-1; Xt{m}(i)=-1;
+                else Xt{m}(i)=o; end;
+                  
             end
         end
     end
@@ -50,5 +52,18 @@ function [Xta, Xtb, Xtc] = DrawFFT(Ma, Mb, Mc, F, triang, Mf, f, t, xai, xbi, xc
     plot(F1(1:f*5*(Mf+2)),P1(1:f*5*(Mf+2))) 
     xlabel("f (Hz)")
     title('FFT')
+   
+        Dv=0; Di=0;
+    for i =setdiff(1:length(P1), f+1)
+        Dv = Dv + P1(i)^2;
+        Z = sqrt(134.54932^2 + (2 * pi * (i-1) * 0.98241)^2);
+        Di = Di + (P1(i)/Z)^2;
+    end
+    
+    TDHv = sqrt(Dv)/P1(f+1);
+    Z1 = sqrt(134.54932^2 + (2 * pi * f * 0.98241)^2);
+    TDHi = sqrt(Dv)/(P1(f+1)/Z1);
+    disp(strjoin(["TDHv:  " TDHv]))
+    disp(strjoin(["TDHi:  " TDHi]))
 return
 end

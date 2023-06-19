@@ -1,6 +1,6 @@
 function XtoS = arduinoStruct(Xto, Aon, Bon, Con)
 Delay=32e-6*length(Xto(:,1));
-Multiplier = floor((16000000/60)/(sum(Xto(:,1))+Delay));
+Multiplier = floor((16000000/(60*(sum(Xto(:,1))+Delay))));
 ValueA = 16;
 ValueB = 8;
 ValueC = 4;
@@ -23,10 +23,12 @@ Xto(:,3) = circshift(Xto(:,3),1);
 XtoS = [round(Xto(:,1)*Multiplier) Xto(:,2) Xto(:,3)];
 
 size = num2str(length(XtoS));
+
 a=['int lim = ', num2str(str2double(size) - 1) ,'; \nstruct moment a[', size ,'] = {\n'];
 for i = 1:numel(XtoS(:,1))
  a= [a, '{',  num2str(XtoS(i,1), '%d') , ',' , num2str(XtoS(i,3)) '},\n' ];
 end
+disp(["Comutações: " + length(XtoS)/3])
 a = [a(1:end-3), "};"];
 a = strjoin(a, '');
 a=sprintf(a);
